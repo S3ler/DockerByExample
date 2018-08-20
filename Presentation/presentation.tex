@@ -1,0 +1,457 @@
+%===============================================================================
+% Zweck:    KTR-Präsentation-Vorlage
+% Erstellt: 15.04.2013
+% Update:   04.07.2016
+% Autor:    M.G.
+%===============================================================================
+\RequirePackage[hyphens]{url}
+
+
+
+\newcommand\ratio{169}
+\documentclass[10pt,aspectratio=\ratio,
+%draft,
+%handout,
+compress
+]{beamer}
+
+\newcommand\meta{./meta}
+\input{\meta/config/commands}
+%\input{\meta/config/packages.tex}
+
+\def\signed #1{{\leavevmode\unskip\nobreak\hfil\penalty50\hskip2em
+  \hbox{}\nobreak\hfil(#1)%
+  \parfillskip=0pt \finalhyphendemerits=0 \endgraf}}
+
+\newsavebox\mybox
+\newenvironment{aquote}[1]
+  {\savebox\mybox{#1}\begin{fancyquotes}}
+  {\signed{\usebox\mybox}\end{fancyquotes}}
+
+
+\input{\meta/config/hyphenation}
+
+\setbeamertemplate{caption}[numbered]
+%\numberwithin{figure}{section}
+
+\begin{document}
+
+  %===============================================================================
+  % Zum Kompilieren latexmk ausführen.
+  %	Konfiguration in texmaker: Options -> Configure Texmaker -> Quick Build -> Select Latexmk + ViewPD
+  %	Entsprechende Informationen in den config/metainfo verändern
+  % Zur Auswahl der Sprache im folgenden Befehl
+  % ngerman für deutsch eintragen, english für Englisch.
+  %===============================================================================
+\selectlanguage{english}
+\ifnum\ratio<169
+\frame{\titlepage}
+\else
+\frame[plain]{\titlepage}
+\fi
+
+%\AtBeginSection[]
+%{
+%  \frame<handout:0>
+%  {
+%    \frametitle{Outline}
+%    \tableofcontents[currentsection,hideallsubsections]
+%  }
+%}
+
+\AtBeginSubsection[]
+{
+  \frame<handout:0>
+  {
+    \frametitle{Outline}
+    \tableofcontents[sectionstyle=show/hide,subsectionstyle=show/shaded/hide,subsubsectionstyle=hide]KTR
+  }
+}
+
+\AtBeginSubsubsection[]
+{
+  \frame<handout:0>
+  {
+    \frametitle{Outline}
+    \tableofcontents[sectionstyle=show/hide,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+  }
+}
+
+\newcommand<>{\highlighton}[1]{%
+  \alt#2{\structure{#1}}{{#1}}
+}
+
+\newcommand{\icon}[1]{\pgfimage[height=1em]{#1}}
+
+\section*{}
+\phantomsection
+\begin{frame}{Content}
+\tableofcontents
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% Content starts here %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\section{Logo}
+%\begin{frame}{Logo}
+%\framesubtitle{In Blau}
+
+%#1 Breite
+%#2 Datei (liegt im image Verzeichnis)
+%#3 Beschriftung
+%#4 Label fuer Referenzierung
+
+%\image{.25\textwidth}{\meta/config/images/logo.png}{Uni-Logo}{img:logo}
+%\end{frame}
+\begin{frame}{Docker Concepts}
+\section{Docker Concepts}
+What does Docker do:
+\begin{itemize}
+	\item ``Docker allows you to package an application with all of its dependencies into a standardized unit for software development.``
+	\item ``Docker containers wrap up a piece of software in a complete filesystem that contains everything it needs to run: code, runtime, system tools, system libraries - anything you can install on a server. This guarantess that it will always run the same, regardless of the environment it is running in.``
+\end{itemize}
+These artifacts are packed and can be exchanged.
+\begin{itemize}
+\item Build, ship and run everywhere!
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Background: Evolution of Virtualization}
+\image{.25\textwidth}{\meta/config/images/logo.png}{Uni-Logo}{img:logo}
+\begin{itemize}
+\item Lightweight containers enable easy horizontal scalability.
+\end{itemize}
+\end{frame}
+\begin{frame}{Virtual Machines vs. Containers}
+\image{.25\textwidth}{\meta/config/images/logo.png}{Uni-Logo}{img:logo}
+\end{frame}
+\begin{frame}{Container vs. Images}
+\begin{itemize}
+	\item An image is blueprint for a container
+	\item An image contains of a read-only set of filesystem layers
+	\item An instance of an image is called container
+	\item You can have many running containers of the same image
+	\item Major difference: container adds a writeable filesystem layer on top of the image
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{\href{https://docs.docker.com/storage/storagedriver/}{images and containers}}{img:imagesandcontainers}
+\end{frame}
+\section{Docker CLI}
+\begin{frame}{Docker CLI}
+
+\end{frame}
+\begin{frame}{Docker CLI}
+\begin{itemize}
+	\item Docker CLI (Command Line Interface) is the docker client
+\end{itemize}
+\image{.50\textwidth}{graphic/docker-architecture.png}{\href{https://docs.docker.com/engine/docker-overview}{Docker overview}}{img:imagesandcontainers}
+\begin{itemize}
+	\item \textbf{Daemon}: daemon of the server process to manage containers
+	\item \textbf{Client}: user client to (remotely) controll the daemon
+	\item \textbf{Registry}: platform for sharing and managing images
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Docker List Commands}
+
+Shows \textbf{state} of containers, volumes and images. \\
+
+Show \textbf{running} container only:
+\begin{itemize}
+		\item \emph{docker container ls}
+\end{itemize}
+
+Show \textbf{all} containers (both commands do the same):
+\begin{itemize}
+	\item  \emph{docker container ls -a}
+	\item  \emph{docker container ls --all}
+\end{itemize}
+
+The same for volumes, networks and images:
+\begin{itemize}
+	\item docker volume ls --all
+    \item docker image ls --all
+    \item docker network ls
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{example of \emph{docker container ls}}{img:dockercontainerlsexample}
+\end{frame}
+
+\begin{frame}{Docker Pull Command}
+The \emph{\textbf{docker pull IMAGE}} command downloads an image from docker registry.
+
+In our case (default) from the \textbf{public} registry - \href{https://hub.docker.com/}{docker hub}
+
+Pull the \textbf{latest} image of busybox (default):
+\begin{itemize}
+	\item docker pull busybox
+\end{itemize}
+
+Pull busybox with tag \textbf{1.29.2-glibc}:
+\begin{itemize}
+	\item docker pull busybox:1.29.2-glibc
+\end{itemize}
+%Download non-locale images from Docker-Hub
+%Question: How to check if the images is in downloaded?
+\end{frame}
+
+
+\begin{frame}{Docker Run Command}
+The \href{https://docs.docker.com/engine/reference/run/}{\emph{\textbf{docker run [OPTIONS] IMAGE[:TAG]}}} command starts container from images.
+\begin{itemize}
+	\item docker run busybox
+\end{itemize}
+Start container for interactive processes (\emph{-i}) and allocate a tty (\emph{-t}). Together written as \emph{-it}.
+
+Open busybox with shell:
+\begin{itemize}
+	\item docker run -it busybox
+\end{itemize}
+
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker run -it busybox} opens shell in a busybox}{img:dockerrunitbusybox}
+
+\end{frame}
+
+\begin{frame}{Docker Inspect Command}
+You can also inspect container, volumes, networks and images giving you detailed information:
+\begin{itemize}
+	\item docker container inspect ID|NAME
+	\item docker volume inspect VOLUMENAME
+	\item docker image inspect IMAGE
+	\item docker network inspect ID|NAME
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
+%TODO testen lassen am ende image inspect IMAGE
+\end{frame}
+
+
+\begin{frame}{Docker Run Command contd.}
+Other very important docker run \textbf{[OPTIONS]}:
+Give container names (unique):
+\begin{itemize}
+	\item docker run -it --name busy busybox
+\end{itemize}
+delete container foobar after running:
+\begin{itemize}
+	\item docker run --rm busybox
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
+\end{frame}
+
+
+\begin{frame}{Exercise 1}
+\begin{enumerate}
+	\item Open a first (power)shell.
+	\item download the image: \structure{\href{https://hub.docker.com/_/busybox/}{busybox}} and \structure{\href{https://hub.docker.com/_/ubuntu/}{ubuntu}}.
+	
+	What do you see? What is different between the two images?
+	
+	\item start a \textbf{ubuntu} container with the name \textbf{foo}.
+	
+	List all directories (\emph{ls}), create a new directory (\emph{mkdir DIRNAME}), List all directories again.
+	
+	\item Open a second (power)shell.
+	\item List all containers.  What is the Id and name of your container?
+	\item Go back to the first (power)shell and exit the container.
+	
+	Grateful with \emph{exit}, abort with \emph{STRG+C}.
+	
+	\item List all containers again. What changes?
+	
+	\item delete the container by using: \emph{docker rm ID|NAME}
+	
+	\item Optional: 
+	
+	inspect the ubuntu container and image
+	
+	delete the container with \emph{docker container rm ID|NAME}
+	and list all containers again
+	
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Docker handling detached containers}
+Normally container run in the background without interaction.
+
+
+Run container without active tty with \emph{--detach} or \emph{-d} option:
+\begin{itemize}
+	\item docker run --name influx --rm influxdb
+\end{itemize}
+
+Inspect stdout with \emph{logs}
+\begin{itemize}
+	\item docker logs influx
+\end{itemize}
+
+Stop running container with
+\begin{itemize}
+	\item docker stop influx
+\end{itemize}
+
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
+\end{frame}
+
+
+\begin{frame}{environment variables}
+You can define environment variables passed to a container.
+
+Syntax: \emph{-e=VARIABLE} or \emph{--env=VARIABLE}
+
+Example: print out value of environment variable foo on console
+\begin{itemize}
+	\item docker run -it -e foo=bar ubuntu
+	\item / \# echo \$foo
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker run -it -e foo=bar ubuntu}}{img:dockerrunitefoobarubuntu}
+\end{frame}
+
+
+\begin{frame}{publish ports}
+By default no ports are accessible outside of the container or docker network.
+
+\vspace{1cm}
+Syntax: \textbf{-p EXTERN:INTERN} or \textbf{- -publish EXTERN:VARIABLE}
+
+\vspace{1cm}
+Example: start php:apache container with port 80 published (not working)
+\begin{itemize}
+	\item docker run -p 80:80 php:apache
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Docker volume option}
+Mapping of local file system into container file system.
+
+Syntax: 
+\begin{itemize}
+	\item \textbf{-v LOCALFS:CONTAINERFS}
+	\item \textbf{- -volume LOCALFS:CONTAINERFS}
+\end{itemize}
+Local file system path: C:/User/Name/html
+Example: start php container with C:/User/Name/html mapped into /var/www/html
+\begin{itemize}
+	\item docker run -v C:/User/Name/html:/var/www/html php:apache
+\end{itemize}
+\end{frame}
+
+
+%\begin{frame}{link}
+%\end{frame}
+
+\begin{frame}{Exercise 2}
+\begin{enumerate}
+	\item GoTo: \url{https://hub.docker.com/_/mysql/} and find the setable environment variables.
+	\item Run all container in detached mode
+	\item Run a mysql container named database with user \textbf{foo} and password \textbf{bar}.
+	\item Check the logs of the mysql
+	\item Run a php:apache container named webserver, publish port 80 and map directory Exercise2/html into /var/www/html
+	\item Ensure that the webservice's html page is available
+	\item list all running container and compare the output with Figure \autoref{img:exercise2dockercontainerls}. It should be equal.
+	\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{Exercise2: docker container ls}}{img:exercise2dockercontainerls}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Docker volumes}
+Volumes without local file system. E.g. network/cloud file system.
+
+Create a volume named database
+\begin{itemize}
+	\item docker create database
+\end{itemize}
+Remember: list volumes
+\begin{itemize}
+	\item docker volume ls
+\end{itemize}
+
+Map a volume like a file system volume by its name.
+\begin{itemize}
+	\item docker run -v database:/var/www/html php:apache
+\end{itemize}
+\end{frame}
+
+%\begin{frame}{Docker --link command (deprecated)}
+%Linking by name like
+%\end{frame}
+
+\begin{frame}{Docker network}
+Linking 
+%$ docker network create mynet
+%$ docker run --name foo --net mynet img
+%$ docker run --name bar --net mynet img
+Intern DNS
+without publishing internal ports globally to the outside
+\end{frame}
+
+%##################################
+
+\section{Docker files}
+\begin{frame}{Concept of Dockerfiles}
+\item until now we used existing images
+\item blueprints for images
+\item a list of commands to create a state 
+\item like setting up a server
+
+%TODO add example dockerfile
+\end{frame}
+
+\begin{frame}{Docker}
+\item until now we used existing images
+\item blueprints for images
+\item a list of commands to create a state 
+\item like setting up a server
+%https://docs.docker.com/engine/reference/builder/#format
+%TODO add example dockerfile
+\end{frame}
+
+
+
+%\section{Git Version}
+%\begin{frame}{Git Version}\framesubtitle{\gitAbbrevHash}
+%\begin{itemize}
+%\item \#: \gitAbbrevHash
+%\item @: \gitAuthorIsoDate
+%\item \gitReferences
+%\end{itemize}
+%\textbf{Setup}\\
+%Follow this link to %\href{https://www.ctan.org/tex-archive/macros/latex/contrib/gitinfo2}{Gitinfo 2}\\
+%\textbf{git hooks}\\
+%  To fill watermark at buttom, deploy gitinfo2-hook.txt to githooks: (copy and make executable) or use \texttt{make git}
+%  \begin{itemize}
+%      \item .git/hooks/post-checkout
+%      \item .git/hooks/post-commit
+%      \item .git/hooks/post-merge
+%  \end{itemize}
+%  \textbf{Remove watermark}\\
+%  To disable watermark, remove option \texttt{[mark]} from \textbackslash usepackage[mark]\{gitinfo2\} in \textit{config/commands.tex}.
+%\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% References          %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{}
+\begin{frame}[allowframebreaks]{References}
+ \def\newblock{\hskip .11em plus .33em minus .07em}
+ \scriptsize
+ \bibliographystyle{IEEEtran}
+ %\bibliography{\meta/exampleLiterature/bib}
+ \normalsize
+\end{frame}
+
+%% Last frame
+\frame{
+  \vspace{2cm}
+  {\huge Questions ?}
+
+  \vspace{20mm}
+  \nocite*
+
+  \begin{flushright}
+    Gabriel Nikol
+
+    \structure{\footnotesize{\href{mailto:GabrielNikol@web.de}{GabrielNikol@web.de}}}
+  \end{flushright}
+}
+
+
+\end{document}

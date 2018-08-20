@@ -1,0 +1,456 @@
+%===============================================================================
+% Zweck: KTR-Meta-Vorlage
+%===============================================================================
+\input{\meta/config/language}
+\newif\ifgit
+\newif\ifseminar
+\newif\ifpresentation
+\newif\ifposter
+\newif\ifthesis
+\newif\iftodo
+% Input files from meta package
+\IfFileExists{config/metainfo}{\input{config/metainfo}}{\gitfalse}
+\input{\meta/config/packages}
+\input{\meta/config/unibaColors}
+\ifgit
+  \newcommand{\gitkeys}{\gitAbbrevHash, \gitAuthorIsoDate, \gitAuthorName }
+\fi
+
+\ifpresentation
+\usetheme{UniBa\ratio}
+%\usefonttheme{
+%	default | professionalfonts | serif |
+%	structurebold | structureitalicserif |
+%	structuresmallcapsserif
+%}
+\usefonttheme{professionalfonts}
+%\useinnertheme{
+%	circles | default | inmargin |
+%	rectangles | rounded
+%}
+\useinnertheme{rectangles}
+%\useoutertheme{
+%	default | infolines | miniframes |
+%	shadow | sidebar | smoothbars |
+%	smoothtree | split | tree
+%}
+%\useoutertheme{split}
+\setbeamercovered{transparent}
+
+% Without navigation symbols
+\beamertemplatenavigationsymbolsempty
+\fi
+
+\makeatletter
+\ifposter
+\else
+\hypersetup{pdftitle={\@title}, pdfauthor={\@author}, linktoc=page, pdfborder={0 0 0 [3 3]}, breaklinks=true, linkbordercolor=unibablueI, menubordercolor=unibablueI, urlbordercolor=unibablueI, citebordercolor=unibablueI, filebordercolor=unibablueI}
+\fi
+%% Define a new 'leo' style for the package that will use a smaller font.
+\def\url@leostyle{%
+  \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\ttfamily}}}
+\makeatother
+%% Now actually use the newly defined style.
+\urlstyle{leo}
+
+
+\graphicspath{{images/},{\meta/config/images/},{\meta/images/}}
+\pgfplotsset{compat=1.9}
+
+\ifpresentation
+\else
+\makeatletter
+\renewcommand{\maketitle} {
+\begin{titlepage}
+\ifthesis
+\ThisCenterWallPaper{1}{\meta/config/images/titlepage.pdf}
+
+\setstretch{1.2}
+\vspace*{55mm}
+\begin{minipage}[t]{2cm}
+\textsc{Thema:}
+\end{minipage}
+\begin{minipage}[t]{12cm}
+\textbf{\Large \@title}\\[10mm]
+\textbf{\large \@subtitle \normalsize}
+\end{minipage}\\[25mm]
+\centering
+\Huge \textbf{\degree arbeit}\\
+\vspace{1cm}
+\Large
+im Studiengang \studycourse\ der Fakultät Wirtschaftsinformatik und Angewandte Informatik der Otto-Friedrich-Universität Bamberg\\
+\normalsize
+\vfill
+\begin{flushleft}
+\begin{tabbing}
+xxxxxxxxxxxxxxx\=xxxxxxxxxxxxxx\kill
+Verfasser: \> \@author\\
+Themensteller:\> \advisor \\
+Abgabedatum:\> \@date\\
+\end{tabbing}
+\end{flushleft}
+\else
+  \centering
+    \begin{minipage}[t]{16cm}
+      \hfill
+      \begin{minipage}{12cm}
+            \centering
+        \uni
+        \\[12pt]%
+        {\Large \chair\\[.5em]%
+        \large \chairsub}%
+      \end{minipage}
+      \hfill
+      \begin{minipage}{3cm}
+        \includegraphics[height=28mm]{\meta/config/images/logo} %height=26mm
+      \end{minipage}
+    \end{minipage}\\[70pt]%[50pt]
+    {\Large\bf \ifseminar\seminar\else\project\fi}\\[36pt]
+    {\LARGE \@title}\\[80pt]
+    \ifseminar%
+    {\Large\bf \topic:}\\[36pt]
+    {\LARGE\bf \subtitle}\\
+    \fi%
+    \vfill
+    \begin{minipage}{\textwidth}
+      \center
+      \submitter:\\
+      {\Large \@author \\[18pt]}
+      \lsupervisor: \supervisor \\[12pt]
+      Bamberg, \@date\\
+      \semester
+    \end{minipage}
+\fi
+\end{titlepage}
+}
+\makeatother
+\fi
+
+\ifgit
+  \renewcommand{\gitMarkFormat}{\color{unibagrayI}\ifpresentation\tiny\else\small\fi\sffamily}
+\fi
+
+\ifthesis
+% Schönere Kapitel?
+\renewcommand*{\chapterformat}{%
+  \thechapter\enskip
+  \textcolor{gray!50}{\rule[-\dp\strutbox]{2pt}{\baselineskip}}\enskip
+}
+\renewcommand{\headfont}{\normalfont\sffamily\itshape}    % Kolumnentitel serifenlos
+\renewcommand{\pnumfont}{\normalfont\sffamily}    % Seitennummern serifenlos
+\pagestyle{scrheadings}
+%\pagestyle{scrplain}
+\ihead[]{\headmark}              % Kolumnentitel immer oben innen
+\chead[]{}                       % Mitte leer lassen
+\ohead[\pagemark]{\pagemark}     % Seitennummern immer oben aussen
+%\ohead[]{}
+\ofoot[]{}                       % Seitennummern in der Fusszeile loeschen
+\cfoot[]{\ifgit \gitMarkFormat{\gitMarkPref\,\textbullet{}\,Branch: \gitBranch\,@\,\gitAbbrevHash{} \textbullet{} Release:\gitReln{} (\gitAuthorDate)}\fi}                       % Seitennummern in der Fusszeile loeschen
+\fi
+
+\numberwithin{equation}{section}
+%
+%===============================================================================
+% zentrale Layout-Angaben und Befehle
+%===============================================================================
+%
+%#1 Breite
+%#2 Datei (liegt im image Verzeichnis)
+%#3 Beschriftung
+%#4 Label fuer Referenzierung
+\newcommand{\image}[4]{%
+\begin{figure}[H]%
+\centering%
+\includegraphics[width=#1]{#2}%
+\caption{#3}%
+\label{#4}%
+\end{figure}%
+}
+
+%#1 Breite
+%#2 Datei (liegt im image Verzeichnis)
+%#3 Beschriftung
+%#4 Label fuer Referenzierung
+\newcommand{\pic}[2]{
+\begin{figure}[H]
+\centering
+\includegraphics[width=#1]{#2}
+\end{figure}
+}
+
+
+%#1 Datei (liegt im graphic Verzeichnis)
+%#2 Beschriftung
+%#3 Label fuer Referenzierung
+%#4 Skalierungsfaktor
+\newcommand{\scaletikzimage}[4]{%
+\begin{figure}[H]%
+\centering%
+\scalebox{#4}{%
+\IfFileExists{graphic/#1.tikz}{\input{graphic/#1.tikz}}{
+\IfFileExists{\meta/exampleGraphic/#1.tikz}{\input{\meta/exampleGraphic/#1.tikz}}{%
+\colorbox{red}{Put your tikz file in the \texttt{graphic} folder}%
+}}}%
+\caption{#2}%
+\label{#3}%
+\end{figure}
+}
+
+% You must include \usepackage[font=footnotesize]{subfig} to use this command
+% #1 relative width of both figures at most 0.5
+% #2 picture one in /taskXX/P1
+% #3 caption of figure 1
+% #4 label of figure 1
+% #5 picture two in /taskXX/P2
+% #6 caption of figure 2
+% #7 label of figure 2
+% #8 overall caption
+% #9 overall label
+\newcommand{\twofigures}[9]{%
+  \begin{figure}[H]%
+    \centerline{%
+      \subfloat[#3]{%
+        \includegraphics[width=#1\textwidth]{#2}%
+        \label{#4}%
+      }%
+      \hfil%
+      \subfloat[#6]{%
+        \includegraphics[width=#1\textwidth]{#5}%
+        \label{#7}%
+      }%
+    }%
+    \caption{#8}%
+    \label{#9}%
+  \end{figure}%
+}
+
+%#1 algorithm name
+%#2 algorithm label
+%#3 file name in code-folder
+\newcommand{\pseudo}[3]{%
+\small%
+\begin{algorithm}[H]%
+\caption{#1}%
+\label{#2}%
+\IfFileExists{code/#3.tex}{\input{code/#3.tex}}{%
+\IfFileExists{\meta/exampleCode/#3.tex}{\input{\meta/exampleCode/#3.tex}}{%
+\colorbox{red}{Put your code file in the \texttt{code} folder}%
+}}%
+\end{algorithm}%
+\normalsize%
+}
+
+\newcounter{saveenumi}
+\newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
+\newcommand{\conti}{\setcounter{enumi}{\value{saveenumi}}}
+
+\ifpresentation
+\resetcounteronoverlays{saveenumi}
+\fi
+
+\ifthesis
+\makeatletter
+\newcommand{\erklaerung}{
+\newpage
+\section*{Eidesstattliche Erklärung}
+\vspace{25mm}
+
+Ich erkläre hiermit gemäß § 17 Abs. 2 APO, dass ich die vorstehende \degree arbeit selbständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel benutzt habe.\\[20mm]
+
+\begin{minipage}{0.4\textwidth}
+\location , \@date \hfill \\
+\textcolor{white}{M}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\begin{flushright}
+\begin{center}
+\textcolor{white}{M}\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\\
+\@author \vfill
+\end{center}
+\end{flushright}
+\end{minipage}
+\newpage
+}
+\makeatother
+\fi
+
+%===============================================================================
+% Listing Styles
+%===============================================================================
+\lstset{basicstyle=\ttfamily,showstringspaces=false,commentstyle=\color{unibagrayI},keywordstyle=\color{unibablueI},breaklines=true}
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{9} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{9}  % for normal
+\lstset{
+language=Python,
+basicstyle=\small,
+otherkeywords={self},             % Add keywords here
+keywordstyle=\small\bf\color{unibablueI},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\small\bf\color{nounibaredII},    % Custom highlighting style
+stringstyle=\small\color{nounibagreenII},
+commentstyle=\small\color{unibagrayI},          % Any extra options here
+showstringspaces=false            %
+}
+
+\newcommand\YAMLcolonstyle{\color{nounibaredII}\mdseries}
+\newcommand\YAMLkeystyle{\color{black}\bfseries}
+\newcommand\YAMLvaluestyle{\color{nounibagreenII}\mdseries}
+
+\makeatletter
+
+% here is a macro expanding to the name of the language
+% (handy if you decide to change it further down the road)
+\newcommand\language@yaml{yaml}
+
+\expandafter\expandafter\expandafter\lstdefinelanguage
+\expandafter{\language@yaml}
+{
+  keywords={true,false,null,y,n},
+  keywordstyle=\color{darkgray}\bfseries,
+  basicstyle=\YAMLkeystyle,                                 % assuming a key comes first
+  sensitive=false,
+  comment=[l]{\#},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\YAMLvaluestyle\ttfamily,
+  moredelim=[l][\color{orange}]{\&},
+  moredelim=[l][\color{magenta}]{*},
+  moredelim=**[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},   % switch to value style at :
+  morestring=[b]',
+  morestring=[b]",
+  literate =    {---}{{\ProcessThreeDashes}}3
+                {>}{{\textcolor{red}\textgreater}}1
+                {|}{{\textcolor{red}\textbar}}1
+                {\ -\ }{{\mdseries\ -\ }}3,
+}
+
+% switch to key style at EOL
+\lst@AddToHook{EveryLine}{\ifx\lst@language\language@yaml\YAMLkeystyle\fi}
+\makeatother
+
+\newcommand\ProcessThreeDashes{\llap{\color{cyan}\mdseries-{-}-}}
+
+% Tikz grid
+\makeatletter
+\def\grd@save@target#1{%
+\def\grd@target{#1}}
+\def\grd@save@start#1{%
+\def\grd@start{#1}}
+\tikzset{
+grid with coordinates/.style={
+to path={%
+\pgfextra{%
+\edef\grd@@target{(\tikztotarget)}%
+\tikz@scan@one@point\grd@save@target\grd@@target\relax
+\edef\grd@@start{(\tikztostart)}%
+\tikz@scan@one@point\grd@save@start\grd@@start\relax
+\draw[minor help lines] (\tikztostart) grid (\tikztotarget);
+\draw[middle help lines] (\tikztostart) grid (\tikztotarget);
+\draw[major help lines] (\tikztostart) grid (\tikztotarget);
+\grd@start
+\pgfmathsetmacro{\grd@xa}{\the\pgf@x/1cm}
+\pgfmathsetmacro{\grd@ya}{\the\pgf@y/1cm}
+\grd@target
+\pgfmathsetmacro{\grd@xb}{\the\pgf@x/1cm}
+\pgfmathsetmacro{\grd@yb}{\the\pgf@y/1cm}
+\pgfmathsetmacro{\grd@xc}{\grd@xa + \pgfkeysvalueof{/tikz/grid with coordinates/major step}}
+\pgfmathsetmacro{\grd@yc}{\grd@ya + \pgfkeysvalueof{/tikz/grid with coordinates/major step}}
+\foreach \x in {\grd@xa,\grd@xc,...,\grd@xb}
+\node[anchor=north] at (\x,\grd@ya) {\pgfmathprintnumber{\x}};
+\foreach \y in {\grd@ya,\grd@yc,...,\grd@yb}
+\node[anchor=east] at (\grd@xa,\y) {\pgfmathprintnumber{\y}};
+}
+}
+},
+minor help lines/.style={
+help lines, gray!20,
+step=\pgfkeysvalueof{/tikz/grid with coordinates/minor step}
+},
+middle help lines/.style={
+help lines, gray!40,
+line width=\pgfkeysvalueof{/tikz/grid with coordinates/major line width},
+step=\pgfkeysvalueof{/tikz/grid with coordinates/middle step}
+},
+major help lines/.style={
+help lines, gray!80,
+line width=\pgfkeysvalueof{/tikz/grid with coordinates/major line width},
+step=\pgfkeysvalueof{/tikz/grid with coordinates/major step}
+},
+grid with coordinates/.cd,
+minor step/.initial=.1,
+middle step/.initial=.5,
+middle line width/.initial=.5pt,
+major step/.initial=1,
+major line width/.initial=1pt,
+}
+\makeatother
+
+\lstdefinelanguage{JavaScript}{
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  keywordstyle=\color{unibablueI},
+  ndkeywordstyle=\color{unibagreenI},
+  identifierstyle=\color{black},
+  commentstyle=\color{unibagrayI}\ttfamily,
+  stringstyle=\color{unibaredI}\ttfamily,
+  sensitive=true
+}
+
+
+%% Fancy Quotes
+\makeatletter
+\tikzset{%
+  fancy quotes/.style={
+    text width=\fq@width pt,
+    align=justify,
+    inner sep=1em,
+    anchor=north west,
+    minimum width=\textwidth,
+  },
+  fancy quotes width/.initial={.8\textwidth},
+  fancy quotes marks/.style={
+    scale=8,
+    text=white,
+    inner sep=0pt,
+  },
+  fancy quotes opening/.style={
+    fancy quotes marks,
+  },
+  fancy quotes closing/.style={
+    fancy quotes marks,
+  },
+  fancy quotes background/.style={
+    show background rectangle,
+    inner frame xsep=0pt,
+    background rectangle/.style={
+      fill=unibagrayIV,
+      rounded corners,
+    },
+  }
+}
+
+\newenvironment{fancyquotes}[1][]{%
+\noindent
+\tikzpicture[fancy quotes background]
+\node[fancy quotes opening,anchor=north west] (fq@ul) at (0,0) {``};
+\tikz@scan@one@point\pgfutil@firstofone(fq@ul.east)
+\pgfmathsetmacro{\fq@width}{\textwidth - 2*\pgf@x}
+\node[fancy quotes,#1] (fq@txt) at (fq@ul.north west) \bgroup}
+{\egroup;
+\node[overlay,fancy quotes closing,anchor=east] at (fq@txt.south east) {''};
+\endtikzpicture}
+
+\makeatother
+
+\ifpresentation
+\changemenucolor{gray}{bg}{named}{unibablueV}
+\changemenucolor{gray}{br}{named}{unibablueI}
+\changemenucolor{gray}{txt}{named}{unibablueI}
+\fi
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%

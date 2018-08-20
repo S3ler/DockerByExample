@@ -1,0 +1,154 @@
+\usepackage[utf8x]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\ifgit
+\ifpresentation
+  \usepackage[local]{gitinfo2}
+  \else
+  \ifthesis
+  \usepackage[local]{gitinfo2}
+  \else
+  \usepackage[local,mark]{gitinfo2}
+  \fi
+\fi
+\fi
+\ifthesis
+  \usepackage{setspace}
+  \usepackage{wallpaper}
+  \usepackage{appendix}
+\fi
+\usepackage{etex}
+\usepackage{latexsym}
+\usepackage{ae}
+\usepackage{color}
+%% Mathe und Formeln
+\usepackage{amsmath}
+\usepackage{calc}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage[nice]{nicefrac}
+\usepackage{cancel}  %%druchstreichen von Formeln
+\usepackage{latexsym,marvosym,wasysym}
+\usepackage{ucs}
+\usepackage{ltxtable}
+\usepackage{ragged2e}
+%%   Fuer anspruchsvolle Tabellen   %%
+\usepackage{longtable, colortbl}
+\usepackage{multicol, multirow}
+\ifposter
+\usepackage{url}
+\else
+\providecommand\phantomsection{}
+\usepackage{hyperref}
+\fi
+\usepackage[numbers]{natbib}
+\usepackage{lscape}
+\iftodo
+\usepackage{todonotes}
+\else
+\usepackage[disable]{todonotes}
+\fi
+%% Graphic
+\usepackage[font=footnotesize]{subfig}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{calc,arrows,fit,positioning,trees,intersections,backgrounds,shadows,decorations,decorations.text,decorations.markings,decorations.shapes,decorations.pathmorphing,shapes,patterns,fadings}
+
+\pdfcompresslevel=9
+
+% Code-Hervorhebung
+% Quellcode
+\usepackage{verbatim}            % Quellcode einbinden (\verbatiminput) standardpaket
+\usepackage{moreverb}
+% PseudoCode
+\ifthesis
+\usepackage[chapter]{algorithm}
+\else
+\usepackage{algorithm}
+\fi
+\usepackage{algpseudocode}
+%\usepackage{algorithmicx}
+\ifposter
+%\usepackage[vlined]{algorithm2e}
+\usepackage{times, relsize, booktabs, caption, helvet, paralist}
+\fi
+
+\floatname{algorithm}{\algo}
+\algrenewcommand{\algorithmiccomment}[1]{\hskip1em\textcolor{gray!60}{$\rhd$ #1}}
+\renewcommand{\listalgorithmname}{\loa}
+\def\algorithmautorefname{\algo}
+
+
+%%   intoc zur Aufnhame des Abkuerzungs- und Symbolverzeichnisses ins Inhaltsverzeichnis
+\ifposter
+\else
+\usepackage[intoc]{nomencl}
+\setlength{\nomlabelwidth}{.20\hsize}
+%\renewcommand{\nomlabel}[1]{#1 \dotfill}
+\setlength{\nomitemsep}{-\parsep}
+\makenomenclature
+\renewcommand{\nomname}{\abbr}
+\newcommand{\nomaltname}{\losymbols}
+\newcommand{\nomaltpreamble}{}
+\newcommand{\nomaltpostamble}{}
+\newcommand{\usetwonomenclatures}{\nomenclature[\switchnomitem]{}{}}
+\newcommand{\switchnomitem}{R}
+\renewcommand{\nomgroup}[1]{%
+\ifthenelse{\equal{#1}{\switchnomitem}}{\switchnomalt}{}}
+\newcommand{\switchnomalt}{%
+\end{thenomenclature}
+\newpage
+\renewcommand{\nomname}{\nomaltname}
+\renewcommand{\nompreamble}{\nomaltpreamble}
+\renewcommand{\nompostamble}{\nomaltpostamble}
+\begin{thenomenclature}
+}
+
+%\renewcommand{\nomname}{\abbr}
+
+%%   Hervorhebung der Abkuerzungsbuchstaben   %%
+\usepackage[normalem]{ulem}
+\newcommand{\m}[1]{\uline{#1}}
+\fi
+\ifthesis
+  %% Stichwortverzeichnis
+  \usepackage{makeidx}
+  \makeindex
+\fi
+
+\ifpresentation
+\else
+\ifposter
+\else
+% ausf\"{u}hrlichere Fehlermeldungen
+\errorcontextlines=999
+%
+% Page-Layout: A4 aus Header
+% Alternative
+\setlength\headheight{14pt}
+\setlength\topmargin{-15,4mm}
+\setlength\oddsidemargin{-0,4mm}
+\setlength\evensidemargin{-0,4mm}
+\setlength\textwidth{160mm}
+\setlength\textheight{252mm}
+%
+%% Absatzeinstellungen
+\setlength\parindent{0mm}
+\setlength\parskip{2ex}
+\fi
+\fi
+
+\ifthesis
+\usepackage[automark]{scrpage2}            % Kopf und Fusszeilen-Layout
+\else
+\usepackage{fancyhdr}
+\fi
+
+\usepackage{listings}
+\usepackage{pifont}
+\usepackage{fourier}
+\usepackage{menukeys}
