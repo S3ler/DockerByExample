@@ -386,24 +386,271 @@ without publishing internal ports globally to the outside
 
 \section{Docker files}
 \begin{frame}{Concept of Dockerfiles}
+\begin{itemize}
 \item until now we used existing images
 \item blueprints for images
 \item a list of commands to create a state 
 \item like setting up a server
-
+\end{itemize}
 %TODO add example dockerfile
 \end{frame}
 
-\begin{frame}{Docker}
-\item until now we used existing images
-\item blueprints for images
-\item a list of commands to create a state 
-\item like setting up a server
-%https://docs.docker.com/engine/reference/builder/#format
-%TODO add example dockerfile
+\begin{frame}{Dockerfile - Motivation}
+Motivation
+\begin{itemize}
+	\item until now we used existing images
+	\item you can commit changes to created conainers, this creates new images (not addressed in this tutorial)
+	\item but cumbersome to share local created images, hard to reproduce
+	\item solution: declarative way to create images => Dockerfiles
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Dockerfile - Concept}
+Concept
+\begin{itemize}
+	\item blueprints for images
+	\item a list of commands to create a state of an image
+	\item makes image creation reproducible
+	\item each RUN instruction adds a delta-layer
+	%https://docs.docker.com/engine/reference/builder/#format
+	%TODO add example dockerfile
+\end{itemize}
+Instructions
+\begin{itemize}
+	\item single line statements and contain a keyword
+	\item not case sensitive
+\end{itemize}
+Example:
+	\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{Minimalistic Dockerfile}}{img:minimalisticdockerfile}
+\end{frame}
+
+\begin{frame}{Dockerfile Instructions 1/6}
+\begin{itemize}
+	\item FROM
+	\item MAINTAINER
+	\item RUN
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dockerfile Instructions 2/6}
+\begin{itemize}
+	\item ADD copy-on-write, adds layer
+	\item COPY
+	\item ENV
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dockerfile Instructions 3/6}
+\begin{itemize}
+	\item BASH example
+	\item CMD
+	\item ENTRYPOINT
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dockerfile Instructions 4/6}
+\begin{itemize}
+	\item BASH example
+	\item CMD
+	\item ENTRYPOINT
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Docker CLI - Building Images}
+
+\begin{itemize}
+	\item (power)shell must be in the same directory as Dockerfile
+	\item Dockerfile must be named Dockerfile
+	\begin{itemize}
+		\item docker image build .
+		\item docker image build -t user/name:tag .
+	\end{itemize}
+\end{itemize}
+Example:
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{Building Minimalistic Dockerfile}}{img:dockerbuildminimalisticdockerfile}
+\end{frame}
+
+\begin{frame}{Exercise Dockerfile 1/2}
+\begin{itemize}
+	\item new dockerfile
+	\item user alpine as base image yourself as maintainer
+	\item add an environment variable named foo with any value bar to the docekrfile
+	\item add/copy echoFoo.sh to dockerfile
+	\item add executable flag to echoFoo.sh (chmod +x echoFoo.sh)
+	\item add Entrypoint to execute echoFoo.sh (to execute script foo in linux: ./echoFoo.sh)
+	\item build image, name it echofoo
+	\item run echofoo and compare output
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{run echofoo with bar as environment variable }}{img:runechofoobardockerfileexercise}
 \end{frame}
 
 
+\begin{frame}{Dockerfile Instructions 5/6}
+\begin{itemize}
+	\item WORKDIR (cd)
+	\item EXPOSE docker run -p 80:80/tcp -p 80:80/udp ...
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dockerfile Instructions 6/6}
+There are many more Dockerfile Instruction e.g.
+\begin{itemize}
+	\item VOLUME creates a volume at runtime
+	\item many more. e.g.
+\end{itemize}
+% https://docs.docker.com/engine/reference/builder/#notes-about-specifying-volumes
+\end{frame}
+
+
+
+\begin{frame}{Exercise Dockerfile 2/2}
+\begin{itemize}
+	\item new dockerfile
+	\item user alpine as base image yourself as maintainer
+	\item install apache2 (and cleanup)
+	\item copy example content to /var/www/html
+	\item expose ports
+	\item set entrypoint to start apache2
+	\item create image named ouruser/alpine:apache2
+	\item run your created image, do not forget to publish port, optional run it in detached mode
+	\item check if your webside is locally reachable by your published port
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{r1234}}{img:1234}
+\end{frame}
+
+\begin{frame}{Docker Compose - Motivation}
+\begin{itemize}
+	\item Tpyically, an application is not one service, but orchestration of multiple smaller isolated service units
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{phpmysqlapplicationoverview}}{img:phpmysqlapplicationoverview}
+\end{frame}
+\begin{frame}{Docker Compose - Motivation}
+Multi-container apps are a hassle
+\begin{itemize}
+	\item Until now:
+	\item pull images, build dockerfiles
+	\item create networks
+	\item create container with long configuration lines (volumes, publish, networks)
+	\item naming is global
+	\item container logs for each container by name or id
+	\item for a lot of containers!!
+\end{itemize}
+Multi-container apps are a hassle
+\begin{itemize}
+	\item docker-compose up does everything automatically
+	\item (after configuration of course)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Docker Compose - Overview}
+
+\begin{itemize}
+	\item bla
+	\item single host!!! (else kubernetes)
+	\item minimal example
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Docker Compose CLI - Commands}
+
+\begin{itemize}
+	\item bla
+	\item minimal example
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Docker Compose File - Aufbau}
+
+\begin{itemize}
+	\item must be named docker-compose.yml or docker-compose.yaml
+	\item container become services
+	\item yaml file (DexternalONT USER TAB, ONLY SPACES)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Docker Compose File - Command Translation}
+
+\begin{itemize}
+	\item publish -> ports:
+	\item volumes with local FS
+	\item environment variable
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Docker Compose File - Build Images with Docker Compose}
+
+\begin{itemize}
+	\item build
+	\item path to Dockerfile
+	\item naming
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Exercise Docker Compose - Beforehand}
+Let's clean up container, images, networks etc.
+Execute: docker system prune etc.
+\end{frame}
+
+\begin{frame}{Exercise Docker Compose - PHP Application 1/2}
+
+
+First Service: PHP with Apache2
+\begin{itemize}
+	\item Dockerfile
+	\begin{itemize}
+			\item expose port 8080
+			\item create dockerfile from php:apache2
+			\item copy scripts to /var/www/html
+	\end{itemize}
+	\item publish port 8080
+	\item create a new service named phpapache2
+	\item depend on mysql service
+\end{itemize}
+Second Service: Database with MySQL
+\begin{itemize}
+	\item create a new service named db\_mysql
+	\item map volume
+	\item define environment variables user passwd
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Docker Compose File - Command Translation}
+networks
+volumes
+by default container are in the bridge network
+\end{frame}
+
+\begin{frame}{Exercise Docker Compose - PHP Application with NGINX 2/2}
+User your artifact from the last exercise
+% TODO provide NGINX with self-signed CA
+First Service: NGINX
+\begin{itemize}
+	\item create a new service named nginx\_reverse\_proxy
+	\item expose port 80
+	\item volume conf.d/default.conf into
+	\item depend on php\_apache2
+	\item join an appropriate network
+\end{itemize}
+Edit Service: PHP with Apache2
+\begin{itemize}
+	\item remove the publish
+\end{itemize}
+Second Service: Database with MySQL
+\begin{itemize}
+	\item create a new service named db\_mysql
+	\item map volume etc
+\end{itemize}
+Networks
+\begin{itemize}
+	\item the Database service shall only be reachable by the php\_apache2 service, so put them in the same network
+	\item the php\_apache2 shall be rechable from the nginx reverse proxy but not from the outside
+	\item nginx shall be accesible over port 80 from the outside
+\end{itemize}
+\end{frame}
 
 %\section{Git Version}
 %\begin{frame}{Git Version}\framesubtitle{\gitAbbrevHash}
@@ -449,7 +696,7 @@ without publishing internal ports globally to the outside
   \begin{flushright}
     Gabriel Nikol
 
-    \structure{\footnotesize{\href{mailto:GabrielNikol@web.de}{GabrielNikol@web.de}}}
+    \structure{\footnotesize{\href{mailto:GabrielNikol}{GabrielNikol}}}
   \end{flushright}
 }
 
