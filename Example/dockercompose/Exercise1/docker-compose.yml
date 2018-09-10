@@ -1,0 +1,7 @@
+version: '3'
+services:
+  webserver:
+    image: httpd
+    ports:
+      - 80:80
+      

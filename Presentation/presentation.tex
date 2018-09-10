@@ -135,10 +135,7 @@ These artifacts are packed and can be exchanged.
 \end{itemize}
 \image{.10\textwidth}{\meta/config/images/logo.png}{\href{https://docs.docker.com/storage/storagedriver/}{images and containers}}{img:imagesandcontainers}
 \end{frame}
-\section{Docker CLI}
-\begin{frame}{Docker CLI}
 
-\end{frame}
 \begin{frame}{Docker CLI}
 \begin{itemize}
 	\item Docker CLI (Command Line Interface) is the docker client
@@ -210,19 +207,6 @@ Open busybox with shell:
 
 \end{frame}
 
-\begin{frame}{Docker Inspect Command}
-You can also inspect container, volumes, networks and images giving you detailed information:
-\begin{itemize}
-	\item docker container inspect ID|NAME
-	\item docker volume inspect VOLUMENAME
-	\item docker image inspect IMAGE
-	\item docker network inspect ID|NAME
-\end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
-%TODO testen lassen am ende image inspect IMAGE
-\end{frame}
-
-
 \begin{frame}{Docker Run Command contd.}
 Other very important docker run \textbf{[OPTIONS]}:
 Give container names (unique):
@@ -236,6 +220,17 @@ delete container foobar after running:
 \image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
 \end{frame}
 
+\begin{frame}{Docker Inspect Command}
+You can also inspect container, volumes, networks and images giving you detailed information:
+\begin{itemize}
+	\item docker container inspect ID|NAME
+	\item docker volume inspect VOLUMENAME
+	\item docker image inspect IMAGE
+	\item docker network inspect ID|NAME
+\end{itemize}
+\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
+
+\end{frame}
 
 \begin{frame}{Exercise 1}
 \begin{enumerate}
@@ -254,16 +249,11 @@ delete container foobar after running:
 	
 	Grateful with \emph{exit}, abort with \emph{STRG+C}.
 	
-	\item List all containers again. What changes?
+	\item List \textbf{all} containers again. What changes?
 	
-	\item delete the container by using: \emph{docker rm ID|NAME}
+	\item inspect the ubuntu container and image
 	
-	\item Optional: 
-	
-	inspect the ubuntu container and image
-	
-	delete the container with \emph{docker container rm ID|NAME}
-	and list all containers again
+	\item delete the container by using: \emph{docker container rm ID|NAME}	and list all containers again
 	
 \end{enumerate}
 \end{frame}
@@ -274,7 +264,7 @@ Normally container run in the background without interaction.
 
 Run container without active tty with \emph{--detach} or \emph{-d} option:
 \begin{itemize}
-	\item docker run --name influx --rm influxdb
+	\item docker run --detach --name influx --rm  influxdb
 \end{itemize}
 
 Inspect stdout with \emph{logs}
@@ -306,15 +296,17 @@ Example: print out value of environment variable foo on console
 
 
 \begin{frame}{publish ports}
-By default no ports are accessible outside of the container or docker network.
+By default no ports are accessible outside of container networks.
+You need to make the explicitly available to the host.
 
 \vspace{1cm}
-Syntax: \textbf{-p EXTERN:INTERN} or \textbf{- -publish EXTERN:VARIABLE}
+Syntax: \textbf{-p EXTERN:INTERN} or \textbf{- -publish EXTERN:INTERN}
 
 \vspace{1cm}
-Example: start php:apache container with port 80 published (not working)
+Example: start a http server on port 80
 \begin{itemize}
-	\item docker run -p 80:80 php:apache
+	\item docker run -p 80:80 httpd
+	\item docker run -publish 80:80 httpd
 \end{itemize}
 
 \end{frame}
@@ -342,21 +334,24 @@ Example: start php container with C:/User/Name/html mapped into /var/www/html
 \begin{enumerate}
 	\item GoTo: \url{https://hub.docker.com/_/mysql/} and find the setable environment variables.
 	\item Run all container in detached mode
-	\item Run a mysql container named database with user \textbf{foo} and password \textbf{bar}.
+	\item Run a mysql container named database with root password \textbf{foobar}.
 	\item Check the logs of the mysql
-	\item Run a php:apache container named webserver, publish port 80 and map directory Exercise2/html into /var/www/html
+	\item Stop the mysql container
+	\item Run a php:7.2-apache container named webserver, publish port 80 and map directory Exercise2/html into /var/www/html
 	\item Ensure that the webservice's html page is available
 	\item list all running container and compare the output with Figure \autoref{img:exercise2dockercontainerls}. It should be equal.
 	\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{Exercise2: docker container ls}}{img:exercise2dockercontainerls}
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Docker volumes}
-Volumes without local file system. E.g. network/cloud file system.
 
-Create a volume named database
+\begin{frame}{Docker volumes}
+Volumes without mounted host directory, so no absolute path needed. Increases portability of applications.
+
+
+Create a volume named database.
 \begin{itemize}
-	\item docker create database
+	\item docker volume create database
 \end{itemize}
 Remember: list volumes
 \begin{itemize}
@@ -365,8 +360,21 @@ Remember: list volumes
 
 Map a volume like a file system volume by its name.
 \begin{itemize}
-	\item docker run -v database:/var/www/html php:apache
+	\item docker run -v database:/var/lib/influxdb --name influx --rm influxdb
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Exercise 3}
+\begin{enumerate}
+	\item open a first (power)shell
+	\item create a volume named shared\_volume
+	\item run a ubuntu image and map shared\_volume to /shared\_volume
+	\item open a second (power)shell
+	\item run a influxdb image and map shared\_volume to /var/lib/influxdb
+	\item change back to the first (power)shell
+	\item list (ls) the content of /shared\_volume
+	
+\end{enumerate}
 \end{frame}
 
 %\begin{frame}{Docker --link command (deprecated)}
@@ -374,26 +382,51 @@ Map a volume like a file system volume by its name.
 %\end{frame}
 
 \begin{frame}{Docker network}
-Linking 
-%$ docker network create mynet
-%$ docker run --name foo --net mynet img
-%$ docker run --name bar --net mynet img
-Intern DNS
-without publishing internal ports globally to the outside
+Until now, container were not interconnection (except over publish ports).
+We can link container via their names, this is provided by an internal docker DNS server.
+For this they must be in the same docker network.
+
+Create a network named mynet.
+\begin{itemize}
+	\item docker network create mynet
+\end{itemize}
+Remember: list networks
+\begin{itemize}
+	\item docker networks ls
+\end{itemize}
+
+Join a container to a network:
+\begin{itemize}
+	\item docker run --name somecontainer --net mynet busybox
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Exercise 4}
+\begin{enumerate}
+	\item open a first (power)shell
+	\item create a network named foobar\_network
+	\item run a ubuntu image named foo and join the foobar\_network
+	\item open a second (power)shell
+	\item run a busybox image named bar and join the foobar\_network
+	\item ping foo from the second and bar from the first (power)shell
+	\item stop all containers and clean up the environment
+	
+\end{enumerate}
 \end{frame}
 
 %##################################
 
 \section{Docker files}
-\begin{frame}{Concept of Dockerfiles}
-\begin{itemize}
-\item until now we used existing images
-\item blueprints for images
-\item a list of commands to create a state 
-\item like setting up a server
-\end{itemize}
-%TODO add example dockerfile
-\end{frame}
+%\begin{frame}{Concept of Dockerfiles}
+%\begin{itemize}
+%\item until now we used existing images
+%\item Not really but a good concept: blueprints for images
+%\item a list of commands to create a state 
+%\item like setting up a server
+%\end{itemize}
+%%TODO add example dockerfile
+%\end{frame}
 
 \begin{frame}{Dockerfile - Motivation}
 Motivation
