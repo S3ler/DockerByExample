@@ -529,7 +529,7 @@ shell form:
 \begin{itemize}
 	\item RUN <command>
 \end{itemize}
-exec form:
+exec form (this form is required for paths containing whitespace):
 \begin{itemize}
 	\item RUN ["executable", "param1", "param2"]
 \end{itemize}
@@ -566,7 +566,6 @@ ENTRYPOINT (exec form preferred)
 
 \begin{frame}{Docker CLI - Building Images}
 You can build you images from a Dockerfile by using the Docker CLI. \\
-General usage: docker build [OPTIONS] PATH | URL | - \\
 
 \begin{enumerate}
 \item path to Dockerfile (Default is 'PATH/Dockerfile')
@@ -592,8 +591,8 @@ Example: Build a Dockerfile with buildcontext in current (power)shell directory
 
 \begin{frame}{Dockerfile - Exercise 1}
 \begin{enumerate}
-	\item create a new Dockerfile in the Dockerfile/Exercise1 folder
-	\item use ubuntu as base image
+	\item go to directory dockerfile/Exercise1
+	\item create a new Dockerfile and use ubuntu as base image
 	\item install cowsay and lolcat in one layer (optional: clean up)
 	\item create an ENTRYPOINT in exec format executing \emph{/usr/games/cowsay} and \emph{"Hello"} as first parameter
 	\item create a CMD in exec format with \emph{"World"} (will be second parameter to cowsay)
@@ -607,47 +606,80 @@ Example: Build a Dockerfile with buildcontext in current (power)shell directory
 \end{frame}
 
 \begin{frame}{Dockerfile Instructions 4/6}
-\begin{itemize}
-	\item ADD copy-on-write, adds layer
-	\item COPY
+Until now you never added local files like prebuild executables or html/php sides to the images.
+Each of these commands adds a new delta-layer to the images.
+You can add files by using ADD and COPY.
 
+Syntax (chown only works on linux containers):
+\begin{itemize}
+	\item ADD [--chown=<user>:<group>] <src>... <dest>
+	\item ADD [--chown=<user>:<group>] ["<src>",... "<dest>"] 
 \end{itemize}
+Example: adds all files starting with "hom"
+\begin{itemize}
+	\item ADD files* /somedir/
+\end{itemize}
+
+Syntax (chown only works on linux containers):
+\begin{itemize}
+	\item COPY [--chown=<user>:<group>] <src>... <dest>
+	\item COPY [--chown=<user>:<group>] ["<src>",... "<dest>"]
+\end{itemize}
+Example: ? is replaced with any single character, e.g., "home.txt"
+\begin{itemize}
+	\item COPY hom?.txt /mydir/
+\end{itemize}
+
 \end{frame}
-
 \begin{frame}{Dockerfile Instructions 5/6}
-\begin{itemize}
+You need to explicitly tell docker in your dockerfiles which port are used.
+Only these ports can be published during docker run -p EXTERNALPORT:INTERNALPORT
 
-	\item EXPOSE docker run -p 80:80/tcp -p 80:80/udp ...
+Syntax:
+\begin{itemize}
+	\item EXPOSE INTERNALPORT
 \end{itemize}
+
+Example: expose port 8081 and publish it to 8080
+\begin{enumerate}
+\item in dockerfile:
+\begin{itemize}
+	\item EXPOSE 8081
+\end{itemize}
+\item docker run command:
+\begin{itemize}
+	\item docker run -p 8080:8081 imagename
+\end{itemize}
+\end{enumerate}
+
 \end{frame}
 
 \begin{frame}{Dockerfile - Exercise 2}
 \begin{itemize}
-	\item use the directory dockerfile/exercise2
-	\item user alpine:latest as base image 
-	\item new dockerfile
-	\item user alpine as base image yourself as maintainer
+	\item go to directory dockerfile/Exercise2
+	\item create a new Dockerfile
+	\item use ubuntu as base image
 	\item install apache2 (and cleanup)
-	\item copy example content to /var/www/html
-	\item expose ports
-	\item set entrypoint to start apache2
-	\item create image named ouruser/alpine:apache2
-	\item run your created image, do not forget to publish port, optional run it in detached mode
-	\item check if your webside is locally reachable by your published port
+	\item add html to /var/www/html
+	\item copy etc/apache2/ports.conf to /etc/apache2/ports.conf
+	\item copy etc/apache2/site-available/000-default.conf to etc/apache2/site-available/000-default.conf
+	\item expose port 8080
+	\item set entrypoint to start apache2 with \emph{apachectl -D FOREGROUND}
+	\item create image named ubuntu with the tag apache2
+	\item run your created image, publish port to 80 (optional run it in detached mode)
+	\item check if your webside is locally reachable
 \end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{r1234}}{img:1234}
 \end{frame}
 
 \begin{frame}{Dockerfile Outlook}
-There are many more Dockerfile Instruction e.g.
+\href{https://docs.docker.com/engine/reference/builder/}{There are many more Dockerfile Instruction e.g.}
 \begin{itemize}
-	\item WORKDIR (cd)
-	\item ENV (cd)
+	\item WORKDIR PATH 
+	\item ENV KEY VALUE
 	\item ARGS
 	\item VOLUME creates a volume at runtime
 	\item many more. e.g.
 \end{itemize}
-% https://docs.docker.com/engine/reference/builder/#notes-about-specifying-volumes
 \end{frame}
 
 \begin{frame}{Docker Compose - Motivation}
