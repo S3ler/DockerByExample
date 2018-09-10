@@ -103,8 +103,26 @@ compress
 
 %\image{.25\textwidth}{\meta/config/images/logo.png}{Uni-Logo}{img:logo}
 %\end{frame}
-\begin{frame}{Docker Concepts}
+\begin{frame}{What you can expect (and what not)}
+What you learn
+\begin{itemize}
+	\item you will learn the concept of docker
+	\item you will learn the most used commands (not representative)
+	\item you get a toolset to dockerize your applications
+	\item you get some practive with the tools (use the tools in exercises)
+\end{itemize}
+But: Everything you will learn  is in the docker documentation, too.
+\begin{itemize}
+	\item you won't be a pro with docker (this needs practice)
+	\item if you only dockerize your application from time to time this is mostly enough
+	\item sometime you need to look into the documentation (or stackoverflow) for special cases/challenges
+	\item this is not a guide to configure proxies, webserver etc. we focus on docker
+\end{itemize}
+
+\end{frame}
 \section{Docker Concepts}
+\begin{frame}{Docker Concepts}
+
 What does Docker do:
 \begin{itemize}
 	\item ``Docker allows you to package an application with all of its dependencies into a standardized unit for software development.``
@@ -169,7 +187,7 @@ The same for volumes, networks and images:
     \item docker image ls --all
     \item docker network ls
 \end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{example of \emph{docker container ls}}{img:dockercontainerlsexample}
+%\image{.10\textwidth}{\meta/config/images/logo.png}{example of \emph{docker container ls}}{img:dockercontainerlsexample}
 \end{frame}
 
 \begin{frame}{Docker Pull Command}
@@ -203,7 +221,7 @@ Open busybox with shell:
 	\item docker run -it busybox
 \end{itemize}
 
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker run -it busybox} opens shell in a busybox}{img:dockerrunitbusybox}
+%\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker run -it busybox} opens shell in a busybox}{img:dockerrunitbusybox}
 
 \end{frame}
 
@@ -217,7 +235,7 @@ delete container foobar after running:
 \begin{itemize}
 	\item docker run --rm busybox
 \end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
+%\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
 \end{frame}
 
 \begin{frame}{Docker Inspect Command}
@@ -228,7 +246,7 @@ You can also inspect container, volumes, networks and images giving you detailed
 	\item docker image inspect IMAGE
 	\item docker network inspect ID|NAME
 \end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
+%\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
 
 \end{frame}
 
@@ -277,7 +295,10 @@ Stop running container with
 	\item docker stop influx
 \end{itemize}
 
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
+Stop running container with
+\begin{itemize}
+	\item docker stop influx
+\end{itemize}
 \end{frame}
 
 
@@ -405,14 +426,36 @@ Join a container to a network:
 \begin{frame}{Exercise 4}
 \begin{enumerate}
 	\item open a first (power)shell
-	\item create a network named foobar\_network
-	\item run a ubuntu image named foo and join the foobar\_network
+	\item create a network named foobar
+	\item run a busybox image named foo and join the foobar
 	\item open a second (power)shell
-	\item run a busybox image named bar and join the foobar\_network
+	\item run a busybox image named bar and join the foobar
 	\item ping foo from the second and bar from the first (power)shell
-	\item stop all containers and clean up the environment
+	\item stop container foo, what happens in the bar container?
+	\item inspect the foobar network
+	\item stop all containers, delete the network and clean up the environment
 	
 \end{enumerate}
+\end{frame}
+
+\begin{frame}{Outlook}
+
+\href{https://docs.docker.com/engine/reference/run/}{Other usefull commands:}
+
+Execute something inside a running container - in most cases a shell:
+Example: detached httpd webserver and exec into bash
+\begin{itemize}
+	\item docker run -d -p 80:80 --name webserver httpd
+	\item sudo docker exec -i -t webserver /bin/bash
+\end{itemize}
+
+
+Override default entrypoint with docker run:
+Example: instead of executing apache go to bash
+\begin{itemize}
+	\item docker run -it --entrypoint "/bin/bash" php
+\end{itemize}
+
 \end{frame}
 
 %##################################
@@ -459,86 +502,129 @@ Example:
 \end{frame}
 
 \begin{frame}{Dockerfile Instructions 1/6}
+Every Dockerfile starts with an image it is based on.
+For this the FROM Keyword is used.
 \begin{itemize}
-	\item FROM
-	\item MAINTAINER
-	\item RUN
+	\item FROM <image>[:<tag>] [AS <name>]
+\end{itemize}
+Example: Ubuntu is a good start for every new docker application
+\begin{itemize}
+	\item FROM ubuntu:latest
+\end{itemize}
+
+
+You can add comments to you Dockerfile with the \# (hash)
+Example: A comment
+\begin{itemize}
+	\item \# this is comment in a Dockerfile
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Dockerfile Instructions 2/6}
+
+A Dockerfile is a list of instructions to create a image.
+To execute commands on the shell use the RUN keyword.
+There exist two forms (shell and exec form):
+shell form:
 \begin{itemize}
-	\item ADD copy-on-write, adds layer
-	\item COPY
-	\item ENV
+	\item RUN <command>
+\end{itemize}
+exec form:
+\begin{itemize}
+	\item RUN ["executable", "param1", "param2"]
+\end{itemize}
+
+In the shell form you can use a \textbackslash  (backslash) to continue a single RUN instruction onto the next line. This increases readability!
+
+
+Example: install git inside an ubuntu image and clean up apt list for thin layers
+\begin{itemize}
+	\item RUN apt-get update \&\& apt-get install -y \textbackslash \\
+	git \textbackslash \\
+	\&\& rm -rf /var/lib/apt/lists/*
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}{Dockerfile Instructions 3/6}
-\begin{itemize}
-	\item BASH example
-	\item CMD
-	\item ENTRYPOINT
-\end{itemize}
-\end{frame}
+Until now you never explicitly said what application to run when you started a container.
+When writing dockerfile you need to define this by using the CMD or ENTRYPOINT command. This sets the image’s main command.
 
-\begin{frame}{Dockerfile Instructions 4/6}
+CMD
 \begin{itemize}
-	\item BASH example
-	\item CMD
-	\item ENTRYPOINT
+	\item CMD [“executable”, “param1”, “param2”…]
+	\item CMD executable param1
+\end{itemize}
+
+
+ENTRYPOINT (exec form preferred)
+\begin{itemize}
+	\item ENTRYPOINT [“executable”, “param1”, “param2”…]
+	\item ENTRYPOINT executable param1
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Docker CLI - Building Images}
+You can build you images from a Dockerfile by using the Docker CLI. \\
+General usage: docker build [OPTIONS] PATH | URL | - \\
 
+\begin{enumerate}
+\item path to Dockerfile (Default is 'PATH/Dockerfile')
+Syntax:
 \begin{itemize}
-	\item (power)shell must be in the same directory as Dockerfile
-	\item Dockerfile must be named Dockerfile
-	\begin{itemize}
-		\item docker image build .
-		\item docker image build -t user/name:tag .
-	\end{itemize}
+	\item -f path/to/Dockerfile
+	\item --file path/to/Dockerfile
 \end{itemize}
-Example:
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{Building Minimalistic Dockerfile}}{img:dockerbuildminimalisticdockerfile}
+\item name and tag of image
+Syntax:
+\begin{itemize}
+	\item -t name:tag
+	\item --tag name:tag
+\end{itemize}
+\item last option is the path to the build context (mostly . )
+\end{enumerate}
+
+Example: Build a Dockerfile with buildcontext in current (power)shell directory
+\begin{itemize}
+	\item docker build -t foo:bar -f path/to/Dockerfile .
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Exercise Dockerfile 1/2}
-\begin{itemize}
-	\item new dockerfile
-	\item user alpine as base image yourself as maintainer
-	\item add an environment variable named foo with any value bar to the docekrfile
-	\item add/copy echoFoo.sh to dockerfile
-	\item add executable flag to echoFoo.sh (chmod +x echoFoo.sh)
-	\item add Entrypoint to execute echoFoo.sh (to execute script foo in linux: ./echoFoo.sh)
-	\item build image, name it echofoo
-	\item run echofoo and compare output
-\end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{run echofoo with bar as environment variable }}{img:runechofoobardockerfileexercise}
+\begin{frame}{Dockerfile - Exercise 1}
+\begin{enumerate}
+	\item create a new Dockerfile in the Dockerfile/Exercise1 folder
+	\item use ubuntu as base image
+	\item install cowsay and lolcat in one layer (optional: clean up)
+	\item create an ENTRYPOINT in exec format executing \emph{/usr/games/cowsay} and \emph{"Hello"} as first parameter
+	\item create a CMD in exec format with \emph{"World"} (will be second parameter to cowsay)
+	\item build your image named cowsay
+	\item run the image cowsay without parameter and with parameter (do not change the Dockerfile)
+	\item comment out the ENTRYPOINT and CMD
+	\item append a new CMD with shell format executing the following: \\ \emph{/usr/games/cowsay "What does the cow say?" | /usr/games/lolcat}
+	\item build your image named lolsay
+	\item run the image lolsay
+\end{enumerate}
 \end{frame}
 
+\begin{frame}{Dockerfile Instructions 4/6}
+\begin{itemize}
+	\item ADD copy-on-write, adds layer
+	\item COPY
+
+\end{itemize}
+\end{frame}
 
 \begin{frame}{Dockerfile Instructions 5/6}
 \begin{itemize}
-	\item WORKDIR (cd)
+
 	\item EXPOSE docker run -p 80:80/tcp -p 80:80/udp ...
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Dockerfile Instructions 6/6}
-There are many more Dockerfile Instruction e.g.
+\begin{frame}{Dockerfile - Exercise 2}
 \begin{itemize}
-	\item VOLUME creates a volume at runtime
-	\item many more. e.g.
-\end{itemize}
-% https://docs.docker.com/engine/reference/builder/#notes-about-specifying-volumes
-\end{frame}
-
-
-
-\begin{frame}{Exercise Dockerfile 2/2}
-\begin{itemize}
+	\item use the directory dockerfile/exercise2
+	\item user alpine:latest as base image 
 	\item new dockerfile
 	\item user alpine as base image yourself as maintainer
 	\item install apache2 (and cleanup)
@@ -550,6 +636,18 @@ There are many more Dockerfile Instruction e.g.
 	\item check if your webside is locally reachable by your published port
 \end{itemize}
 \image{.10\textwidth}{\meta/config/images/logo.png}{\emph{r1234}}{img:1234}
+\end{frame}
+
+\begin{frame}{Dockerfile Outlook}
+There are many more Dockerfile Instruction e.g.
+\begin{itemize}
+	\item WORKDIR (cd)
+	\item ENV (cd)
+	\item ARGS
+	\item VOLUME creates a volume at runtime
+	\item many more. e.g.
+\end{itemize}
+% https://docs.docker.com/engine/reference/builder/#notes-about-specifying-volumes
 \end{frame}
 
 \begin{frame}{Docker Compose - Motivation}
@@ -727,9 +825,9 @@ Networks
   \nocite*
 
   \begin{flushright}
-    Gabriel Nikol
+    made by Gabriel Nikol
 
-    \structure{\footnotesize{\href{mailto:GabrielNikol}{GabrielNikol}}}
+    \structure{\footnotesize{\href{https://github.com/S3ler/DockerByExample}{https://github.com/S3ler/DockerByExample}}}
   \end{flushright}
 }
 
