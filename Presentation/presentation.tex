@@ -125,24 +125,31 @@ But: Everything you will learn  is in the docker documentation, too.
 
 What does Docker do:
 \begin{itemize}
-	\item ``Docker allows you to package an application with all of its dependencies into a standardized unit for software development.``
-	\item ``Docker containers wrap up a piece of software in a complete filesystem that contains everything it needs to run: code, runtime, system tools, system libraries - anything you can install on a server. This guarantess that it will always run the same, regardless of the environment it is running in.``
+	\item ``Docker allows you to \textbf{package an application with all of its dependencies into a standardized} unit for software development.``
+	\item ``Docker \textbf{containers} wrap up a piece of software in a complete filesystem that \textbf{contains everything it needs to run:} code, runtime, system tools, system libraries - anything you can install on a server. This guarantess that it will always run the same, regardless of the environment it is running in.``
 \end{itemize}
 These artifacts are packed and can be exchanged.
 \begin{itemize}
-\item Build, ship and run everywhere!
+\item \textbf{Build, ship and run everywhere!}
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Background: Evolution of Virtualization}
-\image{.25\textwidth}{\meta/config/images/logo.png}{Uni-Logo}{img:logo}
 \begin{itemize}
-\item Lightweight containers enable easy horizontal scalability.
+	\item Lightweight containers enable easy horizontal scalability.
 \end{itemize}
+\image{1\textwidth}{images/concepts/EvolutionOfVirtualization.PNG}{Evolution of Virtualization}{img:evolutionofvirtualization}
 \end{frame}
+
 \begin{frame}{Virtual Machines vs. Containers}
-\image{.25\textwidth}{\meta/config/images/logo.png}{Uni-Logo}{img:logo}
+\image{1.0\textwidth}{images/concepts/VirtualMachisvsContainer.PNG}{Virtual Machines vs. Container}{img:VirtualMachisvsContainer}
 \end{frame}
+
+
+\begin{frame}{Docker's Execution Drivers}
+\image{1.0\textwidth}{images/concepts/DockersExecutionDriver.PNG}{Docker's Execution Drivers}{img:dockersexecutiondrivers}
+\end{frame}
+
 \begin{frame}{Container vs. Images}
 \begin{itemize}
 	\item An image is blueprint for a container
@@ -151,10 +158,27 @@ These artifacts are packed and can be exchanged.
 	\item You can have many running containers of the same image
 	\item Major difference: container adds a writeable filesystem layer on top of the image
 \end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{\href{https://docs.docker.com/storage/storagedriver/}{images and containers}}{img:imagesandcontainers}
+\image{0.4\textwidth}{images/concepts/ContainervsImages.PNG}{Containers vs Images}{img:containervsimages}
+
 \end{frame}
-\section{Docker CLI}
-\begin{frame}{Docker CLI}
+\begin{frame}{Changes and Updates}
+Copying makes containers eddicient
+\begin{itemize}
+	\item only filesystem deltas need to be saved
+	\item multiple containers can safely share a single underlying image
+\end{itemize}
+Changes made to a running container can always be commited to a new image
+\image{0.4\textwidth}{images/concepts/ChangesandUpdates.PNG}{Changes And Updates}{img:changesandupdates}
+\end{frame}
+\begin{frame}{Data Volumes}
+\begin{itemize}
+\item When a container is deleted, any data written to the contaienr that is not stored in a \emph{data volume} is deleted along with the container.
+\item A data volume is a directory or file in the host's filesystem that is mounted directly into a container
+\item Multiple volumes can be mounted by a container and volumes can also be shared between containers
+\end{itemize}
+\image{0.5\textwidth}{images/concepts/DockerVolumes.PNG}{Data Volumes}{img:datavolumes}
+\end{frame}
+\begin{frame}{Overall Architecture}
 \begin{itemize}
 	\item Docker CLI (Command Line Interface) is the docker client
 \end{itemize}
@@ -166,6 +190,7 @@ These artifacts are packed and can be exchanged.
 \end{itemize}
 \end{frame}
 
+\section{Docker CLI}
 \begin{frame}{Docker List Commands}
 
 Shows \textbf{state} of containers, volumes and images. \\
@@ -314,7 +339,7 @@ Example: print out value of environment variable foo on console
 	\item docker run -it -e foo=bar ubuntu
 	\item / \# echo \$foo
 \end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker run -it -e foo=bar ubuntu}}{img:dockerrunitefoobarubuntu}
+%\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker run -it -e foo=bar ubuntu}}{img:dockerrunitefoobarubuntu}
 \end{frame}
 
 
@@ -705,7 +730,7 @@ Example: expose port 8081 and publish it to 8080
 \begin{itemize}
 	\item Tpyically, an application is not one service, but orchestration of multiple smaller isolated service units
 \end{itemize}
-\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{phpmysqlapplicationoverview}}{img:phpmysqlapplicationoverview}
+\image{.50\textwidth}{images/dockercompose/ServicesStack.PNG}{\emph{NGinx, PHP, MySQL Service-Stack}}{img:phpmysqlapplicationoverview}
 \end{frame}
 \begin{frame}{Docker Compose - Motivation}
 Multi-container apps are a hassle
@@ -728,10 +753,10 @@ Multi-container apps are a hassle
 
 \begin{itemize}
 	\item must be named docker-compose.yml or docker-compose.yaml
-	\item container become services
+	\item containers become services
 	\item yaml file (use no tabulator, space only)
-	%TODO add example (full)
 \end{itemize}
+	\image{.45\textwidth}{images/dockercompose/dockercomposeoverview.PNG}{\emph{Example docker-compose.yml file}}{img:exampledockercomposeymlfile}
 \end{frame}
 
 \begin{frame}{Docker Compose CLI}
@@ -757,37 +782,30 @@ stop services (force deletes running container)
 
 \end{frame}
 
-\begin{frame}{Docker Compose File - publish > ports}
+\begin{frame}{Docker Compose File - Ports}
 publish becomes ports with a list of port mappings.
 
-\begin{itemize}
-	\item 	%TODO add example
-\end{itemize}
+\image{.40\textwidth}{images/dockercompose/dockercomposepublish.PNG}{\emph{Example: publish port 80 to 80}}{img:dockercomposepublish80tp80}
+
 \end{frame}
 
-\begin{frame}{Docker Compose File - Command Translation}
+\begin{frame}{Docker Compose File - Volumes}
 Local volume mapping stays volumes with a list of volume mappings.
 Volumes are listed at the end of the yml-file
 
 Example: local mapping and with volume logvolume01
-\begin{itemize}
-	\item 	%TODO add example
-\end{itemize}
+\image{.50\textwidth}{images/dockercompose/dockercomposelocalvolume.PNG}{\emph{Example: Mapping of . to /db, logvolume01 to  /var/log}}{img:dockercomposelocalvolume}
 
 Example: volume definition of logvolume01
-\begin{itemize}
-	\item 	%TODO add example
-\end{itemize}
+\image{.50\textwidth}{images/dockercompose/dockercomposevolume.PNG}{\emph{Example: volumes defintions}}{img:dockercomposevolume}
 \end{frame}
 
 \begin{frame}{Docker Compose File - Build Images with Docker Compose}
 
 Add a build command inside service.
 Image's name and tag is generated automatically by the service's name.
-The context and path to dockerfile can be set by key-value
-\begin{itemize}
-	\item 	%TODO add example
-\end{itemize}
+The context and path to the dockerfile can be set by key-value
+\image{.50\textwidth}{images/dockercompose/dockercomposebuild.PNG}{\emph{Example: build with context and dockerfile}}{img:dockercomposebuild}
 
 Create the images then with:
 \begin{itemize}
@@ -800,10 +818,7 @@ Create the images then with:
 Add a environment command inside service with a list of environment key-values
 
 Example: docker run -e Foo=Bar ...
-\begin{itemize}
-	\item 	%TODO add example
-\end{itemize}
-
+\image{.50\textwidth}{images/dockercompose/dockercomposeenvironment.PNG}{\emph{Example: environment varible key=foo and value=bar}}{img:dockercomposeenvironment}
 
 \end{frame}
 
@@ -823,7 +838,6 @@ First Service: PHP with Apache2
 	\end{itemize}
 	\item publish port 8080
 	\item create a new service named phpapache2
-	\item depend on mysql service
 \end{itemize}
 Second Service: Database with MySQL
 \begin{itemize}
@@ -838,13 +852,13 @@ Second Service: Database with MySQL
 Add the networks: keyword at the end of the yml-file.
 Add a list of networks.
 
-Example: 
-\begin{itemize}
-	\item networks: \\
-	     	frontend:
-\end{itemize}
-by default containers are in the bridge (to the host) network.
+Example: Usage of networks in service
 
+\image{.40\textwidth}{images/dockercompose/dockercomposeusagenetworks.PNG}{\emph{Example: usage of network example\_network in service httpserver}}{img:dockercomposeusagenetworks}
+
+Example: network defintion of example\_network
+\image{.30\textwidth}{images/dockercompose/dockercomposenetworks.PNG}{\emph{Example: networks definition of example\_network}}{img:dockercomposenetworks}
+by default containers are in the bridge (to the host) network.
 \end{frame}
 
 
@@ -902,13 +916,13 @@ Networks
 %%%%%%%%%% References          %%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{}
-\begin{frame}[allowframebreaks]{References}
- \def\newblock{\hskip .11em plus .33em minus .07em}
- \scriptsize
- \bibliographystyle{IEEEtran}
- %\bibliography{\meta/exampleLiterature/bib}
- \normalsize
-\end{frame}
+%\begin{frame}[allowframebreaks]{References}
+% \def\newblock{\hskip .11em plus .33em minus .07em}
+% \scriptsize
+% \bibliographystyle{IEEEtran}
+% %\bibliography{\meta/exampleLiterature/bib}
+% \normalsize
+%\end{frame}
 
 %% Last frame
 \frame{

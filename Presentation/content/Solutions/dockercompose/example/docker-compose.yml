@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  httpserver:
+    image: httpd
+    ports:
+        - 80:80
+    volumes:
+        - .:/code
+        - logvolume01:/var/log
+    networks:
+      - example_network
+   
+  customservice:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    environment:
+        - Foo=Bar
+    networks:
+        - example_network
+  
+volumes:
+   logvolume01:
+
+networks:
+   example_network:
