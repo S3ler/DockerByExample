@@ -153,7 +153,7 @@ These artifacts are packed and can be exchanged.
 \end{itemize}
 \image{.10\textwidth}{\meta/config/images/logo.png}{\href{https://docs.docker.com/storage/storagedriver/}{images and containers}}{img:imagesandcontainers}
 \end{frame}
-
+\section{Docker CLI}
 \begin{frame}{Docker CLI}
 \begin{itemize}
 	\item Docker CLI (Command Line Interface) is the docker client
@@ -249,6 +249,8 @@ You can also inspect container, volumes, networks and images giving you detailed
 %\image{.10\textwidth}{\meta/config/images/logo.png}{\emph{docker image inspect ubuntu}}{img:dockerimageinspectubuntu}
 
 \end{frame}
+
+
 
 \begin{frame}{Exercise 1}
 \begin{enumerate}
@@ -438,6 +440,23 @@ Join a container to a network:
 \end{enumerate}
 \end{frame}
 
+\begin{frame}{Docker CLI - cleanup}
+You can prune (delete unused) containers, volumes, networks, images.
+
+\begin{itemize}
+	\item docker container prune
+	\item docker image prune
+	\item docker volume prune
+	\item docker network prune
+\end{itemize}
+You can do all at once with:
+\begin{itemize}
+	\item docker system prune
+\end{itemize}
+Afterwards check with docker [ container | volume | network | image ] ls
+
+\end{frame}
+
 \begin{frame}{Outlook}
 
 \href{https://docs.docker.com/engine/reference/run/}{Other usefull commands:}
@@ -460,7 +479,7 @@ Example: instead of executing apache go to bash
 
 %##################################
 
-\section{Docker files}
+\section{Dockerfile}
 %\begin{frame}{Concept of Dockerfiles}
 %\begin{itemize}
 %\item until now we used existing images
@@ -681,7 +700,7 @@ Example: expose port 8081 and publish it to 8080
 	\item many more. e.g.
 \end{itemize}
 \end{frame}
-
+\section{Docker Compose}
 \begin{frame}{Docker Compose - Motivation}
 \begin{itemize}
 	\item Tpyically, an application is not one service, but orchestration of multiple smaller isolated service units
@@ -701,61 +720,95 @@ Multi-container apps are a hassle
 \end{itemize}
 Multi-container apps are a hassle
 \begin{itemize}
-	\item docker-compose up does everything automatically
-	\item (after configuration of course)
+	\item docker-compose up does everything automatically (after configuration)
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Docker Compose - Overview}
-
-\begin{itemize}
-	\item bla
-	\item single host!!! (else kubernetes)
-	\item minimal example
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Docker Compose CLI - Commands}
-
-\begin{itemize}
-	\item bla
-	\item minimal example
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Docker Compose File - Aufbau}
+\begin{frame}{Docker Compose File - Overview}
 
 \begin{itemize}
 	\item must be named docker-compose.yml or docker-compose.yaml
 	\item container become services
-	\item yaml file (DexternalONT USER TAB, ONLY SPACES)
+	\item yaml file (use no tabulator, space only)
+	%TODO add example (full)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Docker Compose CLI}
+There exists a wide range of docker-compose cli commands.
+\href{https://docs.docker.com/compose/reference/overview/}{See docker-compose cli overview.} Most important commands:
+
+start services in foreground:
+\begin{itemize}
+	\item docker-compose up
+\end{itemize}
+start services detached:
+\begin{itemize}
+	\item docker-compose up -d
+\end{itemize}
+show service(s) log (console output):
+\begin{itemize}
+	\item docker-compose logs [servicename]
+\end{itemize}
+stop services (force deletes running container)
+\begin{itemize}
+	\item docker-compose rm [--force] | [--stop]
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Docker Compose File - publish > ports}
+publish becomes ports with a list of port mappings.
+
+\begin{itemize}
+	\item 	%TODO add example
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Docker Compose File - Command Translation}
+Local volume mapping stays volumes with a list of volume mappings.
+Volumes are listed at the end of the yml-file
 
+Example: local mapping and with volume logvolume01
 \begin{itemize}
-	\item publish -> ports:
-	\item volumes with local FS
-	\item environment variable
+	\item 	%TODO add example
+\end{itemize}
+
+Example: volume definition of logvolume01
+\begin{itemize}
+	\item 	%TODO add example
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Docker Compose File - Build Images with Docker Compose}
 
+Add a build command inside service.
+Image's name and tag is generated automatically by the service's name.
+The context and path to dockerfile can be set by key-value
 \begin{itemize}
-	\item build
-	\item path to Dockerfile
-	\item naming
+	\item 	%TODO add example
+\end{itemize}
+
+Create the images then with:
+\begin{itemize}
+	\item docker-compose build
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Docker Compose File - Environment Variables}
+
+Add a environment command inside service with a list of environment key-values
+
+Example: docker run -e Foo=Bar ...
+\begin{itemize}
+	\item 	%TODO add example
+\end{itemize}
 
 
-\begin{frame}{Exercise Docker Compose - Beforehand}
-Let's clean up container, images, networks etc.
-Execute: docker system prune etc.
 \end{frame}
+
+
+
 
 \begin{frame}{Exercise Docker Compose - PHP Application 1/2}
 
@@ -782,10 +835,19 @@ Second Service: Database with MySQL
 \end{frame}
 
 \begin{frame}{Docker Compose File - Command Translation}
-networks
-volumes
-by default container are in the bridge network
+Add the networks: keyword at the end of the yml-file.
+Add a list of networks.
+
+Example: 
+\begin{itemize}
+	\item networks: \\
+	     	frontend:
+\end{itemize}
+by default containers are in the bridge (to the host) network.
+
 \end{frame}
+
+
 
 \begin{frame}{Exercise Docker Compose - PHP Application with NGINX 2/2}
 User your artifact from the last exercise
